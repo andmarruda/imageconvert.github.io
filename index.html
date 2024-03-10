@@ -4,22 +4,190 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Free image convert - Using Browser Capabilities</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="./style.css" rel="stylesheet" type="text/css">
   </head>
   <body>
-    <div class="container">
+    <div class="container-xl">
       <h1>Free image convert - Using Browser Capabilities</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>From format</th>
-            <th>To format</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <p>This project is designed to assist individuals seeking to effortlessly convert, resize, and crop images across various formats, including PNG, WEBP, JPG, and GIF. Our user-friendly platform ensures a seamless experience for anyone looking to enhance their digital images quickly and efficiently.</p>
+
+      <div class="card">
+        <div class="card-body">
+          <div id="crop-area" class="mb-3">
+            <img id="image-preview" class="card-img-top">
+            <div id="preview-panel"></div>
+          </div>
+          <h5 class="card-title">Image settings</h5>
+          <div class="row">
+            <div class="col-12">
+              <div class="mb-3">
+                <label for="MaintainAspectRatio" class="form-label">Maintain Aspect Ratio</label>
+                <select id="MaintainAspectRatio" class="form-control">
+                  <option value="true">Yes</option>
+                  <option value="false">No</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-3">
+              <div class="mb-3">
+                <label for="width" class="form-label">Width</label>
+                <input type="number" class="form-control" id="width" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="col-3">
+              <div class="mb-3">
+                <label for="height" class="form-label">Height</label>
+                <input type="number" class="form-control" id="height" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="col-3">
+              <div class="mb-3">
+                <label for="quality" class="form-label">Quality</label>
+                <input type="number" class="form-control" id="quality" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="col-3">
+              <div class="mb-3">
+                <label for="format" class="form-label">Format</label>
+                <select class="form-select" id="format">
+                  <option value="jpg">JPG</option>
+                  <option value="jpeg">JPEG</option>
+                  <option value="png">PNG</option>
+                  <option value="webp">WEBP</option>
+                  <option value="gif">GIF</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-3">
+              <div class="mb-3">
+                <label for="crop-top" class="form-label">Crop Top</label>
+                <input type="number" class="form-control" id="crop-top" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="col-3">
+              <div class="mb-3">
+                <label for="crop-left" class="form-label">Crop Right</label>
+                <input type="number" class="form-control" id="crop-right" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="col-3">
+              <div class="mb-3">
+                <label for="crop-width" class="form-label">Crop Bottom</label>
+                <input type="number" class="form-control" id="crop-bottom" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="col-3">
+              <div class="mb-3">
+                <label for="crop-height" class="form-label">Crop Left</label>
+                <input type="number" class="form-control" id="crop-left" autocomplete="off">
+              </div>
+            </div>
+          </div>
+          <a href="#" class="btn btn-primary">Convert and Download</a>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="file" class="form-label">Image</label>
+        <input type="file" class="form-control" id="file" accept=".jpg,.jpeg,.png,.webp,.gif" autocomplete="off">
+      </div>
+
+      <div class="alert alert-danger" id="error-message" style="display: none;"></div>
+
+      <p>Thoroughly tested across major browsers for optimal performance and compatibility.</p>
+      <ul class="list-inline">
+        <li class="list-inline-item"><img src="./img/chrome_icon.png" alt="Google Chrome"></li>
+        <li class="list-inline-item"><img src="./img/firefox_icon.png" alt="Mozilla Firefox"></li>
+        <li class="list-inline-item"><img src="./img/edge_icon.png" alt="Microsoft Edge"></li>
+      </ul>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="./convert.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const file = document.getElementById('file');
+        file.addEventListener('change', async ({target}) => {
+          document.getElementById('error-message').style.display = 'none';
+          const image = new converter(target.files[0]);
+          if(!image.isValid())
+          {
+            document.getElementById('error-message').innerText = 'Invalid file format';
+            document.getElementById('error-message').style.display = 'block';
+            target.value = '';
+            return;
+          }
+
+          await image.loadImage();
+          const data = image.getImageData();
+          const previewPanel = document.getElementById('preview-panel');
+          const widthField = document.getElementById('width');
+          const heightField = document.getElementById('height');
+          const cropTopField = document.getElementById('crop-top');
+          const cropRightField = document.getElementById('crop-right');
+          const cropBottomField = document.getElementById('crop-bottom');
+          const cropLeftField = document.getElementById('crop-left');
+          const maintainAspectRatio = document.getElementById('MaintainAspectRatio');
+          const quealityField = document.getElementById('quality');
+          const formatField = document.getElementById('format');
+
+          previewPanel.style.top = 0;
+          previewPanel.style.right = 0;
+          previewPanel.style.bottom = 0;
+          previewPanel.style.left = 0;
+
+          document.getElementById('image-preview').src = data.url;
+          widthField.value = data.width;
+          heightField.value = data.height;
+          quealityField.value = 100;
+          formatField.value = image.getExtension();
+          cropTopField.value = 0;
+          cropRightField.value = 0;
+          cropBottomField.value = 0;
+          cropLeftField.value = 0;
+
+          widthField.addEventListener('blur', () => {
+            if(maintainAspectRatio.value === 'true')
+            {
+              heightField.value = image.calcNewHeight(widthField.value);
+            }
+          });
+
+          heightField.addEventListener('blur', () => {
+            if(maintainAspectRatio.value === 'true')
+            {
+              widthField.value = image.calcNewWidth(heightField.value);
+            }
+          });
+
+          cropTopField.addEventListener('input', () => {
+            previewPanel.style.top = `${cropTopField.value}px`;
+          });
+
+          cropRightField.addEventListener('input', () => {
+            previewPanel.style.right = `${cropRightField.value}px`;
+          });
+
+          cropBottomField.addEventListener('input', () => {
+            previewPanel.style.bottom = `${cropBottomField.value}px`;
+          });
+
+          cropLeftField.addEventListener('input', () => {
+            previewPanel.style.left = `${cropLeftField.value}px`;
+          });
+
+          file.value = '';
+        });
+      });
+    </script>
   </body>
 </html>
