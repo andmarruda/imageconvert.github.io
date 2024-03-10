@@ -73,22 +73,22 @@
 
             <div class="col-3">
               <div class="mb-3">
-                <label for="crop-left" class="form-label">Crop Right</label>
-                <input type="number" class="form-control" id="crop-right" autocomplete="off">
-              </div>
-            </div>
-
-            <div class="col-3">
-              <div class="mb-3">
-                <label for="crop-width" class="form-label">Crop Bottom</label>
-                <input type="number" class="form-control" id="crop-bottom" autocomplete="off">
-              </div>
-            </div>
-
-            <div class="col-3">
-              <div class="mb-3">
                 <label for="crop-height" class="form-label">Crop Left</label>
                 <input type="number" class="form-control" id="crop-left" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="col-3">
+              <div class="mb-3">
+                <label for="crop-left" class="form-label">Crop Width</label>
+                <input type="number" class="form-control" id="crop-width" autocomplete="off">
+              </div>
+            </div>
+
+            <div class="col-3">
+              <div class="mb-3">
+                <label for="crop-width" class="form-label">Crop Height</label>
+                <input type="number" class="form-control" id="crop-height" autocomplete="off">
               </div>
             </div>
           </div>
@@ -174,11 +174,11 @@
           });
 
           cropRightField.addEventListener('input', () => {
-            previewPanel.style.right = `${cropRightField.value}px`;
+            previewPanel.style.width = `${cropRightField.value}px`;
           });
 
           cropBottomField.addEventListener('input', () => {
-            previewPanel.style.bottom = `${cropBottomField.value}px`;
+            previewPanel.style.height = `${cropBottomField.value}px`;
           });
 
           cropLeftField.addEventListener('input', () => {
